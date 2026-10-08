@@ -21,26 +21,21 @@ const { title, body, contactLabel, services } = Astro.props;
     class="curve"
     src="/images/curve.webp"
     alt=""
-    width="356"
-    height="50"
+    width="3200"
+    height="647"
     loading="lazy"
     decoding="async"
   />
-  <div class="services-copy">
-    <h2 id="services-title">{title}</h2>
-    <p>{body}</p>
-    <button class="pill" type="button" data-open-contact>{contactLabel}</button>
-  </div>
+  <h2 id="services-title" class="sr-only">{title}</h2>
+  <p class="sr-only">{body}</p>
   <ol class="service-list">
     {
-      services.map((service, index) => (
+      services.map((service) => (
         <li>
+          <h3>{service.title}</h3>
           <ServiceVisual visual={service.visual} title={service.title} />
-          <h3>
-            <span>{String(index + 1).padStart(2, '0')}</span>
-            {service.title}
-          </h3>
           <p>{service.summary}</p>
+          <button class="pill" type="button" data-open-contact>{contactLabel}</button>
         </li>
       ))
     }

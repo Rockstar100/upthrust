@@ -24,7 +24,7 @@ public/models/                 recoloured GLBs, loaded only as an enhancement
 
 Change the JSON files above. `npm run dev` refreshes the page. Services are ordered by the `order` field. After launch, the safe update is a commit and a redeploy. The production HTML is built, so a live URL does not change until that rebuild.
 
-Body copy under Strategy and Insight, and the short lines on the service cards, were not legible in the Figma frames. The headlines, the hero lines, the client names, and the service titles are from the file. The display face in the file was not supplied as a font file, so the page uses Archivo 900 italic.
+Body copy under Strategy and Insight, and the short lines on the service cards, were not legible in the Figma frames. The headlines, the hero lines, the client names, and the service titles are from the file. The display face in the file was not supplied as a font file, so the page uses Barlow Condensed 900 italic.
 
 ## Form and tracking
 
@@ -67,7 +67,7 @@ Set `SITE_URL` to the deployed origin and redeploy so the canonical and Open Gra
 
 ## Assets
 
-`public/models` comes from the Drive GLBs. The curve was given a copper base colour because the export had no colour. Posters in `public/images` are what the page paints. On a desktop without reduced motion, the hero swaps in `<model-viewer>` after idle. The curve stays an image.
+`public/models` comes from the Drive GLBs. The curve was given a copper base colour because the export had no colour. The page paints the high-resolution WebP stills in `public/images`. Those stills are the pictures in the layout, so they stay sharp at 375, 768, and 1440.
 
 ## AI tools
 
@@ -77,5 +77,5 @@ Cursor was used to scaffold the project, read the Figma frames, render the GLBs,
 
 - Footer link columns under the wordmark were too small to read, so they are a short editable stand-in.
 - Service card images in the file were not in the asset pack. The cards use simple built visuals.
-- The live 3D bust is an enhancement. The poster is the image that loads first.
+- The bust and curve on the page are stills rendered from the GLBs. The GLB files stay in `public/models`.
 - There is no hosted URL yet. Vercel and Netlify were not logged in on this machine.

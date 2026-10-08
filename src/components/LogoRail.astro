@@ -12,6 +12,8 @@ const { stat, logos } = Astro.props;
     <span>{stat.label}</span>
   </p>
   <ul>
-    {logos.map((name) => <li>{name}</li>)}
+    {logos.map((name) => (
+      <li class={`logo-${name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z]/g, '')}`}>{name}</li>
+    ))}
   </ul>
 </section>

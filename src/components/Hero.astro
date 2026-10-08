@@ -17,68 +17,35 @@ const { line1, line2, line3, kicker, points, aside } = Astro.props;
       <span class="hero-line hero-that">{line2}<span class="sr-only"> </span></span>
       <span class="hero-line hero-line-bottom">{line3}</span>
     </h1>
-    <p class="hero-kicker">
-      <span class="kicker">{kicker}</span>
-      <span class="points">
-        {points.map((point) => <span>{point}</span>)}
-      </span>
+    <p class="hero-kicker">{kicker}</p>
+    <p class="hero-points">
+      {points[0]?.replace(/\.$/, '')} · {points[1]?.replace(/\.$/, '')} ·<br />
+      {points[2]?.replace(/\.$/, '')} ·
     </p>
-    <div class="bust" id="bust" data-model="/models/statue.glb">
+    <div class="bust">
       <img
         src="/images/statue.webp"
         alt=""
-          width="751"
-          height="964"
+        width="1436"
+        height="1800"
         fetchpriority="high"
         decoding="async"
       />
     </div>
     <p class="hero-aside">{aside}</p>
   </div>
-  <svg class="wireframe" viewBox="0 0 280 220" aria-hidden="true" focusable="false">
-    <g fill="none" stroke="currentColor" stroke-width="0.6">
-      <ellipse cx="150" cy="110" rx="90" ry="90" />
-      <ellipse cx="150" cy="110" rx="90" ry="36" />
-      <ellipse cx="150" cy="110" rx="36" ry="90" />
-      <path d="M60 110h180M150 20v180" />
-      <path d="M78 58c40 18 104 18 144 0M78 162c40-18 104-18 144 0" />
-      <path d="M210 40l40 18-12 46" />
-      <circle cx="236" cy="52" r="2" fill="currentColor" stroke="none" />
+  <svg class="wireframe" viewBox="0 0 320 260" aria-hidden="true" focusable="false">
+    <g fill="none" stroke="currentColor" stroke-width="0.7">
+      <circle cx="132" cy="132" r="96" />
+      <ellipse cx="132" cy="132" rx="96" ry="34" />
+      <ellipse cx="132" cy="132" rx="96" ry="64" />
+      <ellipse cx="132" cy="132" rx="34" ry="96" />
+      <ellipse cx="132" cy="132" rx="64" ry="96" />
+      <path d="M36 132h192M132 36v192" />
+      <path d="M48 78c28 16 140 16 168 0M48 186c28-16 140-16 168 0" />
+      <path d="M214 58c18 8 28 22 34 40" />
+      <path d="M248 98h46M294 98v28" />
+      <circle cx="248" cy="98" r="2.2" fill="currentColor" stroke="none" />
     </g>
   </svg>
 </section>
-
-<script>
-  const bust = document.getElementById('bust');
-  const desktop = window.matchMedia('(min-width: 64rem)');
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
-
-  const upgrade = async () => {
-    if (!bust || bust.dataset.ready === 'true') return;
-    if (!desktop.matches || reduce.matches) return;
-    bust.dataset.ready = 'true';
-    await import('@google/model-viewer');
-    const viewer = document.createElement('model-viewer');
-    viewer.setAttribute('src', bust.dataset.model || '');
-    viewer.setAttribute('alt', '');
-    viewer.setAttribute('aria-hidden', 'true');
-    viewer.setAttribute('interaction-prompt', 'none');
-    viewer.setAttribute('camera-orbit', '95deg 82deg 105%');
-    viewer.setAttribute('exposure', '1.25');
-    viewer.setAttribute('shadow-intensity', '0');
-    viewer.setAttribute('environment-image', 'neutral');
-    viewer.setAttribute('loading', 'lazy');
-    bust.appendChild(viewer);
-    viewer.addEventListener('load', () => bust.classList.add('is-live'));
-  };
-
-  const schedule = () => {
-    if ('requestIdleCallback' in window) requestIdleCallback(() => void upgrade(), { timeout: 2500 });
-    else window.setTimeout(() => void upgrade(), 1400);
-  };
-
-  if (desktop.matches) schedule();
-  desktop.addEventListener('change', () => {
-    if (desktop.matches) schedule();
-  });
-</script>
