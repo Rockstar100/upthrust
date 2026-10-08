@@ -1,0 +1,42 @@
+---
+interface Props {
+  visual: 'dashboard' | 'identity' | 'product' | 'campaign';
+  title: string;
+}
+const { visual, title } = Astro.props;
+---
+
+<div class:list={['visual', `visual-${visual}`]} aria-hidden="true">
+  {visual === 'dashboard' && (
+    <div class="window">
+      <div class="window-bar"><span></span><span></span><span></span></div>
+      <div class="window-body">
+        <div class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="chips"><b>01</b><b>02</b><b>03</b></div>
+      </div>
+    </div>
+  )}
+  {visual === 'identity' && (
+    <div class="identity-board">
+      <span class="swatch"></span>
+      <span class="swatch dark"></span>
+      <strong>Aa</strong>
+    </div>
+  )}
+  {visual === 'product' && (
+    <div class="device">
+      <div class="device-screen">
+        <span></span>
+        <span></span>
+        <span class="block"></span>
+      </div>
+    </div>
+  )}
+  {visual === 'campaign' && (
+    <div class="frames">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  )}
+</div>

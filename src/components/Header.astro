@@ -1,0 +1,16 @@
+---
+interface Props {
+  contactLabel: string;
+}
+const { contactLabel } = Astro.props;
+---
+
+<header class="site-header">
+  <a class="logo" href="#top">
+    <span class="logo-mark" aria-hidden="true"></span>
+    <span>upthrust</span>
+  </a>
+  <button class="text-button" type="button" data-open-contact>
+    {contactLabel}
+  </button>
+</header>

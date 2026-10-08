@@ -1,0 +1,48 @@
+---
+import ServiceVisual from './ServiceVisual.astro';
+
+interface Service {
+  title: string;
+  summary: string;
+  visual: 'dashboard' | 'identity' | 'product' | 'campaign';
+}
+
+interface Props {
+  title: string;
+  body: string;
+  contactLabel: string;
+  services: Service[];
+}
+const { title, body, contactLabel, services } = Astro.props;
+---
+
+<section class="services" id="services" aria-labelledby="services-title">
+  <img
+    class="curve"
+    src="/images/curve.webp"
+    alt=""
+    width="356"
+    height="50"
+    loading="lazy"
+    decoding="async"
+  />
+  <div class="services-copy">
+    <h2 id="services-title">{title}</h2>
+    <p>{body}</p>
+    <button class="pill" type="button" data-open-contact>{contactLabel}</button>
+  </div>
+  <ol class="service-list">
+    {
+      services.map((service, index) => (
+        <li>
+          <ServiceVisual visual={service.visual} title={service.title} />
+          <h3>
+            <span>{String(index + 1).padStart(2, '0')}</span>
+            {service.title}
+          </h3>
+          <p>{service.summary}</p>
+        </li>
+      ))
+    }
+  </ol>
+</section>

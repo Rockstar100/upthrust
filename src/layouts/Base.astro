@@ -1,0 +1,70 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL('/og.png', Astro.site);
+const gtmId = import.meta.env.PUBLIC_GTM_ID || '';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  name: 'Upthrust Design',
+  description,
+  url: canonical.href,
+  image: ogImage.href,
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical.href} />
+    <meta name="theme-color" content="#f3f2ef" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preload" as="image" href="/images/statue.webp" type="image/webp" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical.href} />
+    <meta property="og:image" content={ogImage.href} />
+    <meta property="og:image:alt" content="Upthrust Design — bold design that performs" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage.href} />
+
+    <script is:inline define:vars={{ gtmId }}>
+      window.dataLayer = window.dataLayer || [];
+      if (gtmId) {
+        const loadGtm = () => {
+          if (document.getElementById('gtm-script')) return;
+          window.dataLayer.push({ 'gtm.start': Date.now(), event: 'gtm.js' });
+          const script = document.createElement('script');
+          script.id = 'gtm-script';
+          script.async = true;
+          script.src = 'https://www.googletagmanager.com/gtm.js?id=' + gtmId;
+          document.head.appendChild(script);
+        };
+        if ('requestIdleCallback' in window) requestIdleCallback(loadGtm, { timeout: 3000 });
+        else window.addEventListener('load', () => setTimeout(loadGtm, 1));
+      }
+    </script>
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <slot />
+  </body>
+</html>

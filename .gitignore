@@ -17,6 +17,13 @@ pnpm-debug.log*
 .env
 .env.production
 
+# form submissions
+data/submissions.json
+
+# original downloads; recoloured models live in public/models
+assets/
+tmp/
+
 # macOS-specific files
 .DS_Store
 

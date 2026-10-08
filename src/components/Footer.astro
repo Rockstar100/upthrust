@@ -1,0 +1,44 @@
+---
+interface LinkItem {
+  label: string;
+  href: string;
+}
+interface Column {
+  title: string;
+  links: LinkItem[];
+}
+interface Props {
+  wordLeft: string;
+  wordRight: string;
+  blurb: string;
+  columns: Column[];
+}
+const { wordLeft, wordRight, blurb, columns } = Astro.props;
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <p class="wordmark">
+    <span>{wordLeft}</span>
+    <span class="diamond" aria-hidden="true"></span>
+    <span>{wordRight}</span>
+  </p>
+  <div class="footer-meta">
+    <p>{blurb}</p>
+    {
+      columns.map((column) => (
+        <nav aria-label={column.title}>
+          <h2>{column.title}</h2>
+          <ul>
+            {column.links.map((link) => (
+              <li>
+                <a href={link.href}>{link.label}</a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      ))
+    }
+  </div>
+  <p class="legal">© {year} Upthrust Design</p>
+</footer>

@@ -1,16 +1,36 @@
 ---
+import { getCollection, getEntry } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import LogoRail from '../components/LogoRail.astro';
+import Services from '../components/Services.astro';
+import Footer from '../components/Footer.astro';
+import ContactForm from '../components/ContactForm.astro';
+
+const site = await getEntry('site', 'home');
+if (!site) {
+  throw new Error('Missing site content entry: home');
+}
+
+const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+const { title, description } = site.data;
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Base title={`${title} — Bold design that performs`} description={description}>
+  <div id="top">
+    <Header contactLabel={site.data.contactLabel} />
+    <main id="main">
+      <Hero {...site.data.hero} />
+      <LogoRail stat={site.data.stat} logos={site.data.logos} />
+      <Services
+        title={site.data.strategy.title}
+        body={site.data.strategy.body}
+        contactLabel={site.data.strategy.contactLabel}
+        services={services.map((entry) => entry.data)}
+      />
+    </main>
+    <Footer {...site.data.footer} />
+    <ContactForm {...site.data.form} />
+  </div>
+</Base>

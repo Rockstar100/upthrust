@@ -1,0 +1,17 @@
+---
+interface Props {
+  stat: { value: string; label: string };
+  logos: string[];
+}
+const { stat, logos } = Astro.props;
+---
+
+<section class="logo-rail" aria-label="Selected clients">
+  <p class="stat">
+    <strong>{stat.value}</strong>
+    <span>{stat.label}</span>
+  </p>
+  <ul>
+    {logos.map((name) => <li>{name}</li>)}
+  </ul>
+</section>
