@@ -129,7 +129,10 @@ async function services() {
     await sharp(rounded).resize(560).webp({ quality: 82 }).toFile(out(`services/${name}-560.webp`));
   }
 
-  // Copper curve: slides 1-3 are 1440x810 windows onto one 4320-wide curve (captured at 3451 wide).
+  // Copper curve: slides 1-3 are 1440-wide windows onto one 4320x1400 curve (captured at 3451 wide).
+  // Figma's slides stop at 810, which slices the product loop; the windows run the full 1051-tall
+  // services section instead so every loop ends on its own.
+  const SECTION_H = 1051;
   const scale = 3451 / 4320;
   const offsets = { strategy: 0, identity: 1440, product: 2880 };
   for (const [name, x] of Object.entries(offsets)) {
@@ -137,11 +140,13 @@ async function services() {
       left: Math.round(x * scale),
       top: Math.round(295 * scale),
       width: Math.round(1440 * scale),
-      height: Math.round(810 * scale),
+      height: Math.round(SECTION_H * scale),
     };
     await webp(sharp(tmp('figma-curve.png')).extract(window), `services/curve-${name}.webp`, 82, 90);
   }
-  await webp(sharp(tmp('fig-curve1.png')).resize(1440, 810), 'services/curve-campaign.webp', 82, 90);
+  const campaign = await sharp(tmp('fig-curve1.png')).resize(1440, 810).png().toBuffer();
+  const padded = sharp(campaign).extend({ bottom: SECTION_H - 810, background: { r: 0, g: 0, b: 0, alpha: 0 } });
+  await webp(padded, 'services/curve-campaign.webp', 82, 90);
 }
 
 async function main() {

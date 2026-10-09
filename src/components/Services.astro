@@ -38,7 +38,7 @@ const { label, contactLabel, services } = Astro.props;
           aria-roledescription="slide"
           aria-label={`${index + 1} of ${services.length}`}
         >
-          <img class="slide-curve" src={service.curve} alt="" width="1440" height="810" loading={index ? 'lazy' : undefined} aria-hidden="true" />
+          <img class="slide-curve" src={service.curve} alt="" width="1440" height="1051" loading={index ? 'lazy' : undefined} aria-hidden="true" />
           <p class="slide-label">{label}</p>
           <h2 class="slide-title">{service.title}</h2>
           <img

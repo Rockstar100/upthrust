@@ -273,7 +273,7 @@ button:active { transform: scale(0.97); }
   height: auto;
   max-width: none;
   transform: translateX(-50%);
-  mask-image: linear-gradient(to bottom, #000 45%, transparent 92%);
+  mask-image: linear-gradient(to bottom, #000 35%, transparent 71%);
   pointer-events: none;
 }
 
@@ -397,7 +397,7 @@ button:active { transform: scale(0.97); }
   .services { height: calc(1051 * var(--s)); }
 
   .slide {
-    height: calc(810 * var(--s));
+    height: calc(1051 * var(--s));
     padding: 0;
   }
 
@@ -408,9 +408,9 @@ button:active { transform: scale(0.97); }
     width: 100%;
     height: 100%;
     transform: none;
-    mask-image: none;
     object-fit: cover;
     object-position: center top;
+    mask-image: linear-gradient(to bottom, #000 74%, transparent 88%);
   }
 
   .slide-label {
