@@ -60,9 +60,14 @@ async function hero() {
   write('hero/comfortable.svg', read('fig-comfortable.png'));
   await webp(svgInput(read('fig-path56.png'), 288), 'hero/underline.webp', 90, 100);
 
-  // Blueprint drawing (716x713 in Figma) at 2x.
-  await webp(svgInput(read('fig-clipgroup.png'), 144), 'hero/blueprint.webp', 82, 90);
-  await webp(sharp(out('hero/blueprint.webp')).resize(720), 'hero/blueprint-720.webp', 82, 90);
+  // Blueprint drawing at 2x. Figma masks it to 716 wide, the frame's right edge; the drawing
+  // runs to 1040, so the mask is widened and wide screens see the whole plan instead of a cut.
+  const blueprint = read('fig-clipgroup.png')
+    .replace('width="716" height="713" viewBox="0 0 716 713"', 'width="1040" height="713" viewBox="0 0 1040 713"')
+    .replace(/(maskUnits="userSpaceOnUse" x="0" y="0") width="716"/, '$1 width="1040"')
+    .replace('d="M-6.10352e-05 712.041H716V0H-6.10352e-05V712.041Z"', 'd="M0 712.041H1040V0H0V712.041Z"');
+  await webp(svgInput(blueprint, 144), 'hero/blueprint.webp', 82, 90);
+  await webp(sharp(out('hero/blueprint.webp')).resize(1040), 'hero/blueprint-1040.webp', 82, 90);
 
   // Statue: the 546x685 Figma frame crops a 4096x2304 fill drawn at 1282x721, offset -375,-36.
   const k = 4096 / (4096 * 0.000573394 * 546);

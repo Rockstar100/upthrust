@@ -78,6 +78,7 @@ button:active { transform: scale(0.97); }
 .top {
   container-type: inline-size;
   --u: calc(100cqi / 375);
+  overflow-x: clip;
   background: #fff url("/images/grid.webp") top center / max(100%, 960px) auto no-repeat;
   padding-bottom: calc(40 * var(--u));
 }
