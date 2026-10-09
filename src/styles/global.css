@@ -197,7 +197,7 @@ button, a, input { font: inherit; }
   }
 
   .logo-rail { height: calc(144 * var(--u)); }
-  .rail-full { display: block; width: 100%; }
+  .rail-full { display: block; width: 100%; position: relative; top: calc(2 * var(--u)); }
   .rail-stat {
     position: absolute;
     width: 1px;
@@ -222,9 +222,11 @@ button, a, input { font: inherit; }
 
 .services-grid {
   position: absolute;
-  inset: 0 0 auto;
-  width: 100%;
-  min-width: 960px;
+  top: calc(83 * var(--s));
+  left: 50%;
+  width: max(100%, 960px);
+  max-width: none;
+  transform: translateX(-50%);
   pointer-events: none;
 }
 
@@ -400,6 +402,7 @@ button, a, input { font: inherit; }
     top: calc(158 * var(--s));
     font-size: calc(92 * var(--s));
     line-height: 1;
+    letter-spacing: -0.038em;
     white-space: nowrap;
   }
 
@@ -662,7 +665,7 @@ button, a, input { font: inherit; }
   .newsletter { left: calc(907.5 * var(--f)); top: calc(18 * var(--f)); }
   .newsletter h2 { margin-bottom: calc(11 * var(--f)); font-size: calc(13.5 * var(--f)); line-height: calc(20 * var(--f)); }
   .site-footer::after { height: calc(60 * var(--f)); }
-  .consent { max-width: calc(345 * var(--f)); gap: calc(9 * var(--f)); font-size: calc(9 * var(--f)); line-height: calc(12 * var(--f)); }
+  .consent { max-width: calc(345 * var(--f)); gap: calc(9 * var(--f)); font-size: calc(9.4 * var(--f)); line-height: calc(12 * var(--f)); }
   .consent input { width: calc(8 * var(--f)); height: calc(10 * var(--f)); margin-top: calc(1 * var(--f)); }
   .newsletter input[type="email"] { width: calc(330 * var(--f)); margin-top: calc(10 * var(--f)); font-size: calc(13 * var(--f)); line-height: calc(20 * var(--f)); }
   .newsletter button { margin-top: calc(8 * var(--f)); font-size: calc(13.5 * var(--f)); line-height: calc(20 * var(--f)); }

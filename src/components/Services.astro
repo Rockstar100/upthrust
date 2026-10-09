@@ -17,7 +17,18 @@ const { label, contactLabel, services } = Astro.props;
 ---
 
 <section class="services" id="services" aria-label={label}>
-  <img class="services-grid" src="/images/warp-grid.svg" alt="" width="1440" height="1051" loading="lazy" aria-hidden="true" />
+  <img
+    class="services-grid"
+    src="/images/services-grid.webp"
+    srcset="/images/services-grid-1440.webp 1440w, /images/services-grid.webp 2880w"
+    sizes="max(100vw, 960px)"
+    alt=""
+    width="1440"
+    height="968"
+    loading="lazy"
+    decoding="async"
+    aria-hidden="true"
+  />
   <div class="slider" data-slider tabindex="0" aria-roledescription="carousel" aria-label={label}>
     {
       services.map((service, index) => (
