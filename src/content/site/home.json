@@ -1,44 +1,48 @@
 {
   "title": "Upthrust Design",
-  "description": "Bold design that performs. Upthrust Design is a studio for identity, experience, and motion — strategy that is creative, and work that is not comfortable for its own sake.",
+  "description": "Bold design that performs. Upthrust Design is a studio for identity, experience, and motion — strategy is cheaper, comfortable is expensive.",
   "contactLabel": "Contact us",
   "hero": {
-    "line1": "Bold design",
-    "line2": "That",
-    "line3": "Performs",
-    "kicker": "Strategy is creative",
-    "points": ["Identity.", "Experience.", "Motion."],
-    "aside": "Comfortable is expensive"
+    "title": "Bold design that performs",
+    "notes": ["Strategy is cheaper", "Comfortable is expensive", "Identity", "Experience", "Motion"]
   },
   "stat": {
     "value": "100+",
-    "label": "brands in market"
+    "label": "Brands trusted us to define how they're seen."
   },
   "logos": ["Zomato", "Bosch", "L'Oréal", "Vega", "Dell", "L'Oréal"],
-  "strategy": {
-    "title": "Strategy and Insight",
-    "body": "We start with the commercial problem, not a moodboard. Research becomes a point of view, and that point of view becomes identity, product, and the campaign that has to work on a Tuesday.",
-    "contactLabel": "Contact"
-  },
+  "servicesLabel": "What can we do for you",
   "footer": {
-    "wordLeft": "Upthrust",
-    "wordRight": "Design",
-    "blurb": "A design studio for brands that need the work to perform.",
     "columns": [
       {
-        "title": "Studio",
-        "links": [
-          { "label": "Index", "href": "#top" },
-          { "label": "Services", "href": "#services" }
-        ]
+        "link": { "label": "upthrust.agency", "href": "https://upthrust.agency" },
+        "description": "add description here",
+        "email": "hello@upthrust.agency"
       },
       {
-        "title": "Start",
-        "links": [
-          { "label": "Contact", "href": "#contact" }
-        ]
+        "link": { "label": "upthrust.io", "href": "https://upthrust.io" },
+        "description": "add description here",
+        "email": "hello@upthrust.io"
       }
-    ]
+    ],
+    "tagline": "Lorem ipsum dolor sit amet consectetur",
+    "newsletter": {
+      "title": "Sign up for our emails",
+      "consent": "By checking this box sign up for our newsletter and receive marketing emails and updates on our services. You can unsubscribe at any time.",
+      "placeholder": "typehere@youremail.com",
+      "submitLabel": "Submit",
+      "success": "Thanks — you're on the list."
+    },
+    "links": [
+      { "label": "upthrust.agency", "href": "https://upthrust.agency" },
+      { "label": "upthrust.io", "href": "https://upthrust.io" }
+    ],
+    "social": [
+      { "label": "Instagram", "href": "https://www.instagram.com/" },
+      { "label": "LinkedIn", "href": "https://www.linkedin.com/" }
+    ],
+    "legal": [{ "label": "Privacy Policy", "href": "/privacy" }],
+    "copyright": "© Upthrust Design"
   },
   "form": {
     "title": "Start a project",

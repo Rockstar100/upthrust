@@ -6,11 +6,10 @@ const { contactLabel } = Astro.props;
 ---
 
 <header class="site-header">
-  <a class="logo" href="#top">
-    <span class="logo-mark" aria-hidden="true"></span>
-    <span>upthrust</span>
+  <a class="logo" href="#top" aria-label="Upthrust home">
+    <img src="/brand/logo.svg" alt="" width="157" height="32" />
   </a>
-  <button class="text-button" type="button" data-open-contact>
-    {contactLabel}
+  <button class="header-contact" type="button" data-open-contact aria-label={contactLabel}>
+    <img src="/brand/contact-us.svg" alt="" width="156" height="32" />
   </button>
 </header>

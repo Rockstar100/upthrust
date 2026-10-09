@@ -19,17 +19,14 @@ const { title, description } = site.data;
 
 <Base title={`${title} — Bold design that performs`} description={description}>
   <div id="top">
-    <Header contactLabel={site.data.contactLabel} />
-    <main id="main">
-      <Hero {...site.data.hero} />
-      <LogoRail stat={site.data.stat} logos={site.data.logos} />
-      <Services
-        title={site.data.strategy.title}
-        body={site.data.strategy.body}
-        contactLabel={site.data.strategy.contactLabel}
-        services={services.map((entry) => entry.data)}
-      />
-    </main>
+    <div class="top">
+      <Header contactLabel={site.data.contactLabel} />
+      <main id="main">
+        <Hero {...site.data.hero} />
+        <LogoRail stat={site.data.stat} logos={site.data.logos} />
+      </main>
+    </div>
+    <Services label={site.data.servicesLabel} contactLabel="Contact" services={services.map((entry) => entry.data)} />
     <Footer {...site.data.footer} />
     <ContactForm {...site.data.form} />
   </div>

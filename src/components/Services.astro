@@ -1,43 +1,95 @@
 ---
-import ServiceVisual from './ServiceVisual.astro';
-
 interface Service {
   title: string;
-  summary: string;
-  visual: 'dashboard' | 'identity' | 'product' | 'campaign';
+  intro: string;
+  bullets: string[];
+  note?: string;
+  image: string;
+  imageAlt: string;
+  curve: string;
 }
-
 interface Props {
-  title: string;
-  body: string;
+  label: string;
   contactLabel: string;
   services: Service[];
 }
-const { title, body, contactLabel, services } = Astro.props;
+const { label, contactLabel, services } = Astro.props;
 ---
 
-<section class="services" id="services" aria-labelledby="services-title">
-  <img
-    class="curve"
-    src="/images/curve.webp"
-    alt=""
-    width="3200"
-    height="647"
-    loading="lazy"
-    decoding="async"
-  />
-  <h2 id="services-title" class="sr-only">{title}</h2>
-  <p class="sr-only">{body}</p>
-  <ol class="service-list">
+<section class="services" id="services" aria-label={label}>
+  <img class="services-grid" src="/images/warp-grid.svg" alt="" width="1440" height="1051" loading="lazy" aria-hidden="true" />
+  <div class="slider" data-slider tabindex="0" aria-roledescription="carousel" aria-label={label}>
     {
-      services.map((service) => (
-        <li>
-          <h3>{service.title}</h3>
-          <ServiceVisual visual={service.visual} title={service.title} />
-          <p>{service.summary}</p>
-          <button class="pill" type="button" data-open-contact>{contactLabel}</button>
-        </li>
+      services.map((service, index) => (
+        <article
+          class:list={['slide', { 'has-note': service.note }]}
+          id={`service-${index + 1}`}
+          aria-roledescription="slide"
+          aria-label={`${index + 1} of ${services.length}`}
+        >
+          <img class="slide-curve" src={service.curve} alt="" width="1440" height="810" loading={index ? 'lazy' : undefined} aria-hidden="true" />
+          <p class="slide-label">{label}</p>
+          <h2 class="slide-title">{service.title}</h2>
+          <img
+            class="slide-image"
+            src={service.image}
+            srcset={`${service.image.replace('.webp', '-560.webp')} 560w, ${service.image} 984w`}
+            sizes="(min-width: 64rem) min(34.2vw, 492px), (min-width: 36rem) 34rem, calc(100vw - 2.5rem)"
+            alt={service.imageAlt}
+            width="984"
+            height="662"
+            loading="lazy"
+          />
+          <p class="slide-intro">{service.intro}</p>
+          <ul class="slide-list">
+            {service.bullets.map((item) => <li>{item}</li>)}
+          </ul>
+          {service.note && <p class="slide-note">{service.note}</p>}
+          <button class="slide-contact" type="button" data-open-contact>{contactLabel}</button>
+        </article>
       ))
     }
-  </ol>
+  </div>
+  <div class="slider-nav">
+    <button class="slider-arrow" type="button" data-slide-prev aria-label="Previous service">←</button>
+    <div class="slider-dots">
+      {
+        services.map((service, index) => (
+          <button type="button" data-slide-to={index} aria-label={service.title} aria-current={index === 0 ? 'true' : undefined} />
+        ))
+      }
+    </div>
+    <button class="slider-arrow" type="button" data-slide-next aria-label="Next service">→</button>
+  </div>
 </section>
+
+<script>
+  const slider = document.querySelector<HTMLElement>('[data-slider]');
+  if (slider) {
+    const slides = [...slider.querySelectorAll<HTMLElement>('.slide')];
+    const dots = [...document.querySelectorAll<HTMLButtonElement>('[data-slide-to]')];
+    const current = () => Math.round(slider.scrollLeft / slider.clientWidth);
+    const go = (index: number) => {
+      const next = (index + slides.length) % slides.length;
+      slider.scrollTo({ left: next * slider.clientWidth, behavior: 'smooth' });
+    };
+    document.querySelector('[data-slide-prev]')?.addEventListener('click', () => go(current() - 1));
+    document.querySelector('[data-slide-next]')?.addEventListener('click', () => go(current() + 1));
+    dots.forEach((dot, index) => dot.addEventListener('click', () => go(index)));
+    slider.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowRight') go(current() + 1);
+      if (event.key === 'ArrowLeft') go(current() - 1);
+    });
+    let frame = 0;
+    slider.addEventListener('scroll', () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const active = current();
+        dots.forEach((dot, index) => {
+          if (index === active) dot.setAttribute('aria-current', 'true');
+          else dot.removeAttribute('aria-current');
+        });
+      });
+    });
+  }
+</script>

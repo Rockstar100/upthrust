@@ -1,6 +1,14 @@
 {
   "title": "Brand & visual identity",
-  "summary": "Marks, type, and systems that stay sharp once they leave the deck.",
+  "intro": "We build systems, not just logos. So you own the category, not just the conversation.",
+  "bullets": [
+    "Brand identity & visual language",
+    "Guidelines & naming",
+    "Illustration & iconography",
+    "Brand architecture & systems"
+  ],
   "order": 2,
-  "visual": "identity"
+  "image": "/services/identity.webp",
+  "imageAlt": "Identity system with print collateral, colour swatches and brand shapes",
+  "curve": "/services/curve-identity.webp"
 }

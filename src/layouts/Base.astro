@@ -30,9 +30,17 @@ const jsonLd = {
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical.href} />
-    <meta name="theme-color" content="#f3f2ef" />
+    <meta name="theme-color" content="#ffffff" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="preload" as="image" href="/images/statue.webp" type="image/webp" />
+    <link
+      rel="preload"
+      as="image"
+      href="/images/statue.webp"
+      imagesrcset="/images/statue-600.webp 600w, /images/statue.webp 1092w"
+      imagesizes="(min-width: 48rem) min(37.9vw, 546px), 62.7vw"
+      type="image/webp"
+      fetchpriority="high"
+    />
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />

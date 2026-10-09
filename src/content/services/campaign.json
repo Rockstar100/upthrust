@@ -1,6 +1,14 @@
 {
   "title": "Creative & campaign production",
-  "summary": "Campaigns, motion, and assets that hold up in market, not only in a review.",
+  "intro": "We turn attention into action. Then we prove it worked.",
+  "bullets": [
+    "Campaign creative & social content",
+    "Presentations & pitch decks",
+    "Marketing collateral & ad creative"
+  ],
+  "note": "psst.. Also, physical spaces. Because not everything happens on a screen experiential and spatial design for exhibitions, placemaking and branded environments, Just ask.",
   "order": 4,
-  "visual": "campaign"
+  "image": "/services/campaign.webp",
+  "imageAlt": "Campaign work across billboards, posters and social posts",
+  "curve": "/services/curve-campaign.webp"
 }

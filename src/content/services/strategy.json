@@ -1,6 +1,14 @@
 {
   "title": "Strategy and Insight",
-  "summary": "A direction the business can use. Positioning, narrative, and the decisions that keep the work honest.",
+  "intro": "We interrogate what others assume. Then we build the brief behind the brief.",
+  "bullets": [
+    "Brand strategy & positioning",
+    "Messaging & tone of voice",
+    "Audience & competitor research",
+    "Workshops & creative sprints"
+  ],
   "order": 1,
-  "visual": "dashboard"
+  "image": "/services/strategy.webp",
+  "imageAlt": "Strategy board with audience personas, typography studies and a brand overview",
+  "curve": "/services/curve-strategy.webp"
 }

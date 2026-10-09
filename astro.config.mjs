@@ -10,6 +10,7 @@ export default defineConfig({
   site,
   output: 'static',
   adapter: node({ mode: 'standalone' }),
+  build: { inlineStylesheets: 'always' },
   vite: {
     plugins: [tailwindcss()],
   },

@@ -1,6 +1,14 @@
 {
   "title": "Product & digital experience",
-  "summary": "Interfaces with a point of view. Clear, fast, and built to convert.",
+  "intro": "We design for humans and metrics. So users stay, engage, and come back.",
+  "bullets": [
+    "UI/UX & website design",
+    "Design systems & prototyping",
+    "User research & testing",
+    "Motion graphics & micro-interactions"
+  ],
   "order": 3,
-  "visual": "product"
+  "image": "/services/product.webp",
+  "imageAlt": "Neatlogs product interface on laptop and tablet with type and colour specimens",
+  "curve": "/services/curve-product.webp"
 }

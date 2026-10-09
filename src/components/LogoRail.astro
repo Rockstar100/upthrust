@@ -6,14 +6,19 @@ interface Props {
 const { stat, logos } = Astro.props;
 ---
 
-<section class="logo-rail" aria-label="Selected clients">
-  <p class="stat">
+<section class="logo-rail" aria-label="Clients">
+  <img class="rail-full" src="/brand/logo-rail.svg" alt="" width="1440" height="144" loading="lazy" aria-hidden="true" />
+  <p class="rail-stat">
     <strong>{stat.value}</strong>
     <span>{stat.label}</span>
   </p>
-  <ul>
-    {logos.map((name) => (
-      <li class={`logo-${name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z]/g, '')}`}>{name}</li>
-    ))}
+  <div class="rail-marquee" aria-hidden="true">
+    <div class="rail-track">
+      <img src="/brand/logos.webp" alt="" width="1110" height="64" loading="lazy" />
+      <img src="/brand/logos.webp" alt="" width="1110" height="64" loading="lazy" />
+    </div>
+  </div>
+  <ul class="sr-only">
+    {logos.map((logo) => <li>{logo}</li>)}
   </ul>
 </section>

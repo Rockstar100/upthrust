@@ -38,7 +38,7 @@ const { title, intro, success, submitLabel } = Astro.props;
         <textarea id="message" name="message" required maxlength="2000" rows="5"></textarea>
         <p class="error" id="message-error" hidden></p>
       </div>
-      <div class="hp" inert>
+      <div class="hp" inert aria-hidden="true">
         <label for="company_website">Website</label>
         <input id="company_website" name="company_website" type="text" tabindex="-1" autocomplete="off" />
       </div>

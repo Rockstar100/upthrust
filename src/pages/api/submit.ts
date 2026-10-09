@@ -21,8 +21,20 @@ export const POST: APIRoute = async ({ request }) => {
     return Response.json({ ok: true });
   }
 
-  const name = clean(data.get('name'), MAX.name);
   const email = clean(data.get('email'), MAX.email);
+
+  if (data.get('form') === 'newsletter') {
+    const fields: Record<string, string> = {};
+    if (!isEmail(email)) fields.email = 'Enter a valid email address.';
+    if (data.get('consent') !== 'yes') fields.consent = 'Tick the box to sign up.';
+    if (Object.keys(fields).length) {
+      return Response.json({ ok: false, error: 'Check the highlighted fields.', fields }, { status: 400 });
+    }
+    const id = await store({ id: crypto.randomUUID(), type: 'newsletter', email, submittedAt: new Date().toISOString() });
+    return Response.json({ ok: true, id });
+  }
+
+  const name = clean(data.get('name'), MAX.name);
   const company = clean(data.get('company'), MAX.company);
   const message = clean(data.get('message'), MAX.message);
 
@@ -35,15 +47,20 @@ export const POST: APIRoute = async ({ request }) => {
     return Response.json({ ok: false, error: 'Check the highlighted fields.', fields }, { status: 400 });
   }
 
-  const entry = {
+  const id = await store({
     id: crypto.randomUUID(),
+    type: 'contact',
     name,
     email,
     company,
     message,
     submittedAt: new Date().toISOString(),
-  };
+  });
 
+  return Response.json({ ok: true, id });
+};
+
+async function store(entry: Record<string, string>) {
   const dir = path.join(process.cwd(), 'data');
   const file = path.join(dir, 'submissions.json');
   await mkdir(dir, { recursive: true });
@@ -58,6 +75,5 @@ export const POST: APIRoute = async ({ request }) => {
 
   existing.push(entry);
   await writeFile(file, JSON.stringify(existing, null, 2));
-
-  return Response.json({ ok: true, id: entry.id });
-};
+  return entry.id;
+}

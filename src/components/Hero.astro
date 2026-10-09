@@ -1,51 +1,59 @@
 ---
 interface Props {
-  line1: string;
-  line2: string;
-  line3: string;
-  kicker: string;
-  points: string[];
-  aside: string;
+  title: string;
+  notes: string[];
 }
-const { line1, line2, line3, kicker, points, aside } = Astro.props;
+const { title, notes } = Astro.props;
+
+// Keep in sync with the statue preload in layouts/Base.astro.
+const statueSrcset = '/images/statue-600.webp 600w, /images/statue.webp 1092w';
+const statueSizes = '(min-width: 48rem) min(37.9vw, 546px), 62.7vw';
+
+// Desktop positions are the Figma frame (1440 x 1079); mobile positions use a 375-wide frame.
+const layers = [
+  { cls: 'that', src: '/hero/that.svg', w: 294.04, h: 91.55, x: 796, y: 494, mx: 222, my: 199, mw: 128 },
+  { cls: 'bold', src: '/hero/bold.svg', w: 1363.12, h: 160.6, x: 38.44, y: 81, mx: 10, my: 28, mw: 355 },
+  {
+    cls: 'blueprint',
+    src: '/hero/blueprint.webp',
+    srcset: '/hero/blueprint-720.webp 720w, /hero/blueprint.webp 1432w',
+    sizes: '(min-width: 48rem) min(49.7vw, 716px), 54.7vw',
+    w: 716, h: 712.04, x: 724, y: 366.96, mx: 170, my: 250, mw: 205,
+  },
+  {
+    cls: 'statue',
+    src: '/images/statue.webp',
+    srcset: statueSrcset,
+    sizes: statueSizes,
+    w: 546, h: 685, x: 447, y: 173, mx: 70, my: 60, mw: 235, priority: true,
+  },
+  { cls: 'performs', src: '/hero/performs.svg', w: 1129.59, h: 160.59, x: 155, y: 826, mx: 16, my: 345, mw: 343 },
+  { cls: 'comfortable', src: '/hero/comfortable.svg', w: 229, h: 64, x: 1157, y: 365, mx: 214, my: 418, mw: 140 },
+  { cls: 'underline', src: '/hero/underline.webp', w: 172, h: 9, x: 1157, y: 435, mx: 214, my: 460, mw: 105 },
+  { cls: 'strategy', src: '/hero/strategy.svg', w: 188, h: 70, x: 277, y: 438, mx: 20, my: 418, mw: 128 },
+  { cls: 'identity', src: '/hero/identity.svg', w: 251, h: 141, x: 73, y: 590, mx: 20, my: 485, mw: 170 },
+];
 ---
 
-<section class="hero" aria-labelledby="page-title">
-  <div class="hero-grid">
-    <h1 id="page-title">
-      <span class="hero-line hero-line-top">{line1}<span class="sr-only"> </span></span>
-      <span class="hero-line hero-that">{line2}<span class="sr-only"> </span></span>
-      <span class="hero-line hero-line-bottom">{line3}</span>
-    </h1>
-    <p class="hero-kicker">{kicker}</p>
-    <p class="hero-points">
-      {points[0]?.replace(/\.$/, '')} · {points[1]?.replace(/\.$/, '')} ·<br />
-      {points[2]?.replace(/\.$/, '')} ·
-    </p>
-    <div class="bust">
-      <img
-        src="/images/statue.webp"
-        alt=""
-        width="1436"
-        height="1800"
-        fetchpriority="high"
-        decoding="async"
-      />
-    </div>
-    <p class="hero-aside">{aside}</p>
+<section class="hero" aria-labelledby="hero-title">
+  <h1 id="hero-title" class="sr-only">{title}</h1>
+  <p class="sr-only">{notes.join('. ')}.</p>
+  <div class="hero-stage" aria-hidden="true">
+    {
+      layers.map((layer) => (
+        <img
+          class={`hero-layer hero-${layer.cls}`}
+          src={layer.src}
+          srcset={layer.srcset}
+          sizes={layer.sizes}
+          alt=""
+          width={layer.w}
+          height={layer.h}
+          style={`--x:${layer.x};--y:${layer.y};--w:${layer.w};--mx:${layer.mx};--my:${layer.my};--mw:${layer.mw}`}
+          fetchpriority={layer.priority ? 'high' : undefined}
+          decoding={layer.priority ? 'sync' : 'async'}
+        />
+      ))
+    }
   </div>
-  <svg class="wireframe" viewBox="0 0 320 260" aria-hidden="true" focusable="false">
-    <g fill="none" stroke="currentColor" stroke-width="0.7">
-      <circle cx="132" cy="132" r="96" />
-      <ellipse cx="132" cy="132" rx="96" ry="34" />
-      <ellipse cx="132" cy="132" rx="96" ry="64" />
-      <ellipse cx="132" cy="132" rx="34" ry="96" />
-      <ellipse cx="132" cy="132" rx="64" ry="96" />
-      <path d="M36 132h192M132 36v192" />
-      <path d="M48 78c28 16 140 16 168 0M48 186c28-16 140-16 168 0" />
-      <path d="M214 58c18 8 28 22 34 40" />
-      <path d="M248 98h46M294 98v28" />
-      <circle cx="248" cy="98" r="2.2" fill="currentColor" stroke="none" />
-    </g>
-  </svg>
 </section>

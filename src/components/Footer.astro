@@ -3,42 +3,109 @@ interface LinkItem {
   label: string;
   href: string;
 }
-interface Column {
-  title: string;
-  links: LinkItem[];
-}
 interface Props {
-  wordLeft: string;
-  wordRight: string;
-  blurb: string;
-  columns: Column[];
+  columns: { link: LinkItem; description: string; email: string }[];
+  tagline: string;
+  newsletter: { title: string; consent: string; placeholder: string; submitLabel: string; success: string };
+  links: LinkItem[];
+  social: LinkItem[];
+  legal: LinkItem[];
+  copyright: string;
 }
-const { wordLeft, wordRight, blurb, columns } = Astro.props;
-const year = new Date().getFullYear();
+const { columns, tagline, newsletter, links, social, legal, copyright } = Astro.props;
 ---
 
 <footer class="site-footer">
   <p class="wordmark">
-    <span>{wordLeft}</span>
-    <span class="diamond" aria-hidden="true"></span>
-    <span>{wordRight}</span>
+    <img src="/brand/wordmark.svg" alt="Upthrust.Design" width="1440" height="206" loading="lazy" />
   </p>
-  <div class="footer-meta">
-    <p>{blurb}</p>
-    {
-      columns.map((column) => (
-        <nav aria-label={column.title}>
-          <h2>{column.title}</h2>
-          <ul>
-            {column.links.map((link) => (
-              <li>
-                <a href={link.href}>{link.label}</a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      ))
-    }
+  <div class="footer-body">
+    <div class="footer-left">
+      <div class="footer-columns">
+        {
+          columns.map((column) => (
+            <div class="footer-col">
+              <a class="ext" href={column.link.href} target="_blank" rel="noopener">
+                {column.link.label}
+              </a>
+              <p>
+                {column.description}
+                <a class="muted" href={`mailto:${column.email}`}>{column.email}</a>
+              </p>
+            </div>
+          ))
+        }
+      </div>
+      <p class="muted tagline">{tagline}</p>
+    </div>
+    <div class="footer-right">
+      <form class="newsletter" id="newsletter-form" method="post" action="/api/submit" novalidate>
+        <input type="hidden" name="form" value="newsletter" />
+        <h2>{newsletter.title}</h2>
+        <label class="consent">
+          <input type="checkbox" name="consent" value="yes" required />
+          <span>{newsletter.consent}</span>
+        </label>
+        <label class="sr-only" for="newsletter-email">Email</label>
+        <input id="newsletter-email" name="email" type="email" autocomplete="email" placeholder={newsletter.placeholder} required maxlength="200" />
+        <div class="hp" inert aria-hidden="true">
+          <label for="newsletter-website">Website</label>
+          <input id="newsletter-website" name="company_website" type="text" tabindex="-1" autocomplete="off" />
+        </div>
+        <button type="submit">{newsletter.submitLabel}</button>
+        <p class="newsletter-status" role="status" hidden></p>
+      </form>
+      <ul class="footer-links">
+        {
+          links.map((link) => (
+            <li>
+              <a class="ext" href={link.href} target="_blank" rel="noopener">
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="social">
+        {social.map((link, index) => (
+          <>
+            <a href={link.href} target="_blank" rel="noopener">{link.label}</a>
+            {index < social.length - 1 && ', '}
+          </>
+        ))}
+      </p>
+      <p class="muted legal">
+        {legal.map((link) => <a href={link.href}>{link.label}</a>)}
+        <span>{copyright}</span>
+      </p>
+    </div>
   </div>
-  <p class="legal">© {year} Upthrust Design</p>
 </footer>
+
+<script define:vars={{ success: newsletter.success }}>
+  const form = document.getElementById('newsletter-form');
+  if (form instanceof HTMLFormElement) {
+    const status = form.querySelector('.newsletter-status');
+    const say = (text) => {
+      status.textContent = text;
+      status.hidden = false;
+    };
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const data = new FormData(form);
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(data.get('email') || '').trim())) return say('Enter a valid email address.');
+      if (data.get('consent') !== 'yes') return say('Tick the box to sign up.');
+      try {
+        const response = await fetch('/api/submit', { method: 'POST', body: data });
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) return say(payload.error || 'Something went wrong. Try again.');
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({ event: 'form_submit', form_id: 'newsletter' });
+        form.reset();
+        say(success);
+      } catch {
+        say('Something went wrong. Try again.');
+      }
+    });
+  }
+</script>
