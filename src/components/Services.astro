@@ -56,7 +56,9 @@ const { label, contactLabel, services } = Astro.props;
             {service.bullets.map((item) => <li>{item}</li>)}
           </ul>
           {service.note && <p class="slide-note">{service.note}</p>}
-          <button class="slide-contact" type="button" data-open-contact>{contactLabel}</button>
+          <button class="slide-contact" type="button" data-open-contact aria-label={`${contactLabel} about ${service.title}`}>
+            {contactLabel}
+          </button>
         </article>
       ))
     }
@@ -79,10 +81,11 @@ const { label, contactLabel, services } = Astro.props;
   if (slider) {
     const slides = [...slider.querySelectorAll<HTMLElement>('.slide')];
     const dots = [...document.querySelectorAll<HTMLButtonElement>('[data-slide-to]')];
+    const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
     const current = () => Math.round(slider.scrollLeft / slider.clientWidth);
     const go = (index: number) => {
       const next = (index + slides.length) % slides.length;
-      slider.scrollTo({ left: next * slider.clientWidth, behavior: 'smooth' });
+      slider.scrollTo({ left: next * slider.clientWidth, behavior: reduceMotion.matches ? 'auto' : 'smooth' });
     };
     document.querySelector('[data-slide-prev]')?.addEventListener('click', () => go(current() - 1));
     document.querySelector('[data-slide-next]')?.addEventListener('click', () => go(current() + 1));

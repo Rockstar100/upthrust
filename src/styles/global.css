@@ -41,6 +41,13 @@ button, a, input { font: inherit; }
   outline-offset: 3px;
 }
 
+a,
+button {
+  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease, transform 0.15s ease;
+}
+
+button:active { transform: scale(0.97); }
+
 .skip-link {
   position: absolute;
   left: 1rem;
@@ -102,6 +109,11 @@ button, a, input { font: inherit; }
 
 .logo img,
 .header-contact img { width: 100%; }
+
+@media (hover: hover) {
+  .logo:hover { opacity: 0.7; }
+  .header-contact:hover { opacity: 0.85; }
+}
 
 .hero { position: relative; }
 
@@ -689,6 +701,26 @@ button, a, input { font: inherit; }
 
 .contact-dialog::backdrop { background: rgb(0 0 0 / 62%); }
 
+.contact-dialog,
+.contact-dialog::backdrop {
+  opacity: 0;
+  transition: opacity 0.25s ease, transform 0.25s ease, overlay 0.25s allow-discrete, display 0.25s allow-discrete;
+}
+
+.contact-dialog { transform: translateY(0.75rem); }
+
+.contact-dialog[open],
+.contact-dialog[open]::backdrop {
+  opacity: 1;
+  transform: none;
+}
+
+@starting-style {
+  .contact-dialog[open],
+  .contact-dialog[open]::backdrop { opacity: 0; }
+  .contact-dialog[open] { transform: translateY(0.75rem); }
+}
+
 .contact-dialog form { padding: 1.75rem; }
 
 #contact-intro { margin: 0.4rem 0 1.4rem; color: #5e5a55; }
@@ -763,4 +795,8 @@ button, a, input { font: inherit; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .rail-track { animation: none; }
+  *,
+  ::before,
+  ::after,
+  ::backdrop { transition-duration: 0.01ms !important; }
 }
