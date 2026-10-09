@@ -94,6 +94,9 @@ const { label, contactLabel, services } = Astro.props;
       if (event.key === 'ArrowRight') go(current() + 1);
       if (event.key === 'ArrowLeft') go(current() - 1);
     });
+    const fitHeight = () => {
+      slider.style.height = `${slides[current()]?.offsetHeight ?? 0}px`;
+    };
     let frame = 0;
     slider.addEventListener('scroll', () => {
       cancelAnimationFrame(frame);
@@ -103,7 +106,10 @@ const { label, contactLabel, services } = Astro.props;
           if (index === active) dot.setAttribute('aria-current', 'true');
           else dot.removeAttribute('aria-current');
         });
+        fitHeight();
       });
     });
+    new ResizeObserver(fitHeight).observe(slider);
+    slides.forEach((slide) => new ResizeObserver(fitHeight).observe(slide));
   }
 </script>

@@ -247,8 +247,10 @@ button:active { transform: scale(0.97); }
   position: relative;
   z-index: 1;
   display: flex;
+  align-items: flex-start;
   overflow-x: auto;
   overscroll-behavior-x: contain;
+  transition: height 0.3s ease;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
 }
@@ -511,7 +513,7 @@ button:active { transform: scale(0.97); }
   position: absolute;
   inset: auto 0 0;
   height: 4.5rem;
-  background: url("/images/warp-grid.svg") center 35% / max(100%, 960px) auto no-repeat;
+  background: url("/images/footer-grid.webp") center bottom / max(100%, 960px) auto no-repeat;
   pointer-events: none;
 }
 

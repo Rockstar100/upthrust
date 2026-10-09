@@ -21,8 +21,7 @@ src/pages/api/submit.ts        contact and newsletter handler
 public/hero, public/brand      vectors copied out of Figma
 public/services                bento cards and copper-curve backdrops per slide
 scripts/build-figma-assets.cjs turns the raw Figma captures in tmp/ into the files above
-scripts/extract-grid.cjs       crops the Figma "curve lines" grid that sits behind the services
-scripts/warp-grid.cjs          draws the grid strip at the foot of the footer
+scripts/extract-grid.cjs       crops the Figma "curve lines" grid behind the services and along the foot of the footer
 ```
 
 ## Editing content
@@ -82,7 +81,6 @@ Cursor was used to scaffold the project, pull layers out of Figma, and write the
 
 ## Limits
 
-- The grid strip at the foot of the footer is redrawn by `scripts/warp-grid.cjs`. The services grid is the Figma layer.
 - The file shows one slide at a time with no controls. The page adds arrows and dots so the four slides can be reached.
 - Footer copy such as "add description here" and "Lorem ipsum" is the placeholder text from the file.
 - There is no hosted URL yet. Vercel and Netlify were not logged in on this machine.
