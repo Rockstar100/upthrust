@@ -267,12 +267,13 @@ button:active { transform: scale(0.97); }
 
 .slide-curve {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  top: 0;
+  left: 50%;
+  width: max(100%, 52rem);
+  height: auto;
   max-width: none;
-  object-fit: cover;
-  object-position: 40% 0;
+  transform: translateX(-50%);
+  mask-image: linear-gradient(to bottom, #000 45%, transparent 92%);
   pointer-events: none;
 }
 
@@ -402,7 +403,15 @@ button:active { transform: scale(0.97); }
 
   .slide > * { position: absolute; margin: 0; }
 
-  .slide-curve { inset: 0; object-fit: cover; object-position: center top; }
+  .slide-curve {
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    transform: none;
+    mask-image: none;
+    object-fit: cover;
+    object-position: center top;
+  }
 
   .slide-label {
     left: calc(var(--o) + 40 * var(--s));
