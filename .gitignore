@@ -20,7 +20,7 @@ pnpm-debug.log*
 # form submissions
 data/submissions.json
 
-# original downloads; recoloured models live in public/models
+# raw Figma and Drive downloads; scripts/build-figma-assets.cjs writes the web copies to public/
 assets/
 tmp/
 
