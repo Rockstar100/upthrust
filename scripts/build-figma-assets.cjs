@@ -115,6 +115,38 @@ async function brand() {
   write('brand/wordmark.svg', `<svg width="1440" height="206" viewBox="0 252 1440 206" fill="none" xmlns="http://www.w3.org/2000/svg">${body}${defs}`);
 }
 
+// Top and bottom of the copper tube in one column of an RGBA buffer, within rows y0-y1.
+function tubeSpan(data, width, x, y0, y1) {
+  let top = -1, bottom = -1;
+  for (let y = y0; y < y1; y++) {
+    const i = (y * width + x) * 4;
+    if (((data[i] + data[i + 1] + data[i + 2]) / 3) * (data[i + 3] / 255) <= 40) continue;
+    if (top < 0) top = y;
+    bottom = y;
+  }
+  return [top, bottom];
+}
+
+// Sweeps the product curve's last column along the campaign tube and fades it out over `width`
+// columns, so the stripe and highlight don't jump where slide 3 hands over to slide 4.
+function blendSeam(campaign, product, size, width = 240) {
+  const { w, h } = size;
+  const [pTop, pBottom] = tubeSpan(product, w, w - 1, 150, 450);
+  const pad = 6;
+  for (let x = 0; x < width; x++) {
+    const [cTop, cBottom] = tubeSpan(campaign, w, x, 150, 450);
+    const t = x / width;
+    const keep = 1 - t * t * (3 - 2 * t);
+    for (let y = cTop - pad; y <= cBottom + pad; y++) {
+      const v = (y - cTop) / (cBottom - cTop);
+      const sy = Math.min(h - 1, Math.max(0, Math.round(pTop + v * (pBottom - pTop))));
+      const ci = (y * w + x) * 4;
+      const pi = (sy * w + (w - 1)) * 4;
+      for (let c = 0; c < 4; c++) campaign[ci + c] = Math.round(product[pi + c] * keep + campaign[ci + c] * (1 - keep));
+    }
+  }
+}
+
 async function services() {
   // Bento cards: 492x331 at 2x, at the same spot on every slide, with Figma's 7px radius.
   const card = { left: 240, top: 670, width: 984, height: 662 };
@@ -135,18 +167,38 @@ async function services() {
   const SECTION_H = 1051;
   const scale = 3451 / 4320;
   const offsets = { strategy: 0, identity: 1440, product: 2880 };
+  const curveWindow = (x) => ({
+    left: Math.round(x * scale),
+    top: Math.round(295 * scale),
+    width: Math.round(1440 * scale),
+    height: Math.round(SECTION_H * scale),
+  });
   for (const [name, x] of Object.entries(offsets)) {
-    const window = {
-      left: Math.round(x * scale),
-      top: Math.round(295 * scale),
-      width: Math.round(1440 * scale),
-      height: Math.round(SECTION_H * scale),
-    };
-    await webp(sharp(tmp('figma-curve.png')).extract(window), `services/curve-${name}.webp`, 82, 90);
+    await webp(sharp(tmp('figma-curve.png')).extract(curveWindow(x)), `services/curve-${name}.webp`, 82, 90);
   }
-  const campaign = await sharp(tmp('fig-curve1.png')).resize(1440, 810).png().toBuffer();
-  const padded = sharp(campaign).extend({ bottom: SECTION_H - 810, background: { r: 0, g: 0, b: 0, alpha: 0 } });
-  await webp(padded, 'services/curve-campaign.webp', 82, 90);
+  // Slide 4 is a separate render whose tube enters 5% thinner and a few px off the product curve's
+  // exit; scale it from the left edge so the tube is continuous while scrolling from slide 3 to 4.
+  const SEAM_SCALE = 1.0575;
+  const SEAM_TOP = 14;
+  const scaledH = Math.round(810 * SEAM_SCALE);
+  const scaled = await sharp(tmp('fig-curve1.png')).resize(Math.round(1440 * SEAM_SCALE), scaledH).png().toBuffer();
+  const campaign = await sharp(scaled)
+    .extract({ left: 0, top: SEAM_TOP, width: 1440, height: scaledH - SEAM_TOP })
+    .png()
+    .toBuffer();
+  const padded = await sharp(campaign)
+    .extend({ bottom: SECTION_H - (scaledH - SEAM_TOP), background: { r: 0, g: 0, b: 0, alpha: 0 } })
+    .ensureAlpha()
+    .raw()
+    .toBuffer();
+  const product = await sharp(tmp('figma-curve.png'))
+    .extract(curveWindow(offsets.product))
+    .resize(1440, SECTION_H, { fit: 'fill' })
+    .ensureAlpha()
+    .raw()
+    .toBuffer();
+  blendSeam(padded, product, { w: 1440, h: SECTION_H });
+  await webp(sharp(padded, { raw: { width: 1440, height: SECTION_H, channels: 4 } }), 'services/curve-campaign.webp', 82, 90);
 }
 
 async function main() {

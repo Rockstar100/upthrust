@@ -369,6 +369,9 @@ button:active { transform: scale(0.97); }
   padding: 0 1.25rem 3rem;
 }
 
+.slide-contact,
+.slider-nav { user-select: none; }
+
 .slider-arrow {
   width: 2.5rem;
   height: 2.5rem;
