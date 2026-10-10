@@ -1,0 +1,123 @@
+# Editors sign in with GitHub. Every save is a commit to the repo, and Vercel redeploys it.
+# Locally, run `npm run cms` next to `npm run dev` and open http://localhost:4321/admin/index.html (no sign-in, edits files on disk).
+backend:
+  name: github
+  repo: Rockstar100/upthrust
+  branch: master
+  base_url: /
+  auth_endpoint: api/auth
+  commit_messages:
+    update: "Content: update {{collection}} “{{slug}}”"
+    create: "Content: add {{collection}} “{{slug}}”"
+    delete: "Content: remove {{collection}} “{{slug}}”"
+    uploadMedia: "Content: upload {{path}}"
+    deleteMedia: "Content: delete {{path}}"
+
+local_backend: true
+
+media_folder: public/uploads
+public_folder: /uploads
+
+collections:
+  - name: site
+    label: Page content
+    files:
+      - name: home
+        label: Homepage
+        file: src/content/site/home.json
+        format: json
+        fields:
+          - { name: title, label: Site name, widget: string }
+          - { name: description, label: SEO description, widget: text, hint: "Meta description and Open Graph text. Aim for 140–160 characters." }
+          - { name: contactLabel, label: Header button label, widget: string }
+          - name: hero
+            label: Hero
+            widget: object
+            hint: "The large hero type is artwork from the design. These fields are the text read by search engines and screen readers."
+            fields:
+              - { name: title, label: Headline (H1), widget: string }
+              - { name: notes, label: Side notes, widget: list, field: { name: note, label: Note, widget: string } }
+          - name: stat
+            label: Stat beside the logos
+            widget: object
+            fields:
+              - { name: value, label: Value, widget: string }
+              - { name: label, label: Label, widget: string }
+          - { name: logos, label: Client names (alt text for the logo rail), widget: list, field: { name: logo, label: Client, widget: string } }
+          - { name: servicesLabel, label: Services eyebrow, widget: string }
+          - name: footer
+            label: Footer
+            widget: object
+            fields:
+              - name: columns
+                label: Contact columns
+                widget: list
+                summary: "{{fields.email}}"
+                fields:
+                  - name: link
+                    label: Link
+                    widget: object
+                    fields:
+                      - { name: label, label: Label, widget: string }
+                      - { name: href, label: URL, widget: string }
+                  - { name: description, label: Description, widget: string }
+                  - { name: email, label: Email, widget: string }
+              - { name: tagline, label: Tagline, widget: string }
+              - name: newsletter
+                label: Newsletter
+                widget: object
+                fields:
+                  - { name: title, label: Title, widget: string }
+                  - { name: consent, label: Consent text, widget: text }
+                  - { name: placeholder, label: Email placeholder, widget: string }
+                  - { name: submitLabel, label: Button label, widget: string }
+                  - { name: success, label: Success message, widget: string }
+              - name: links
+                label: Links
+                widget: list
+                fields:
+                  - { name: label, label: Label, widget: string }
+                  - { name: href, label: URL, widget: string }
+              - name: social
+                label: Social links
+                widget: list
+                fields:
+                  - { name: label, label: Label, widget: string }
+                  - { name: href, label: URL, widget: string }
+              - name: legal
+                label: Legal links
+                widget: list
+                fields:
+                  - { name: label, label: Label, widget: string }
+                  - { name: href, label: URL, widget: string }
+              - { name: copyright, label: Copyright, widget: string }
+          - name: form
+            label: Contact dialog
+            widget: object
+            fields:
+              - { name: title, label: Title, widget: string }
+              - { name: intro, label: Intro, widget: text }
+              - { name: success, label: Success message, widget: string }
+              - { name: submitLabel, label: Button label, widget: string }
+
+  - name: services
+    label: Service slides
+    label_singular: Service slide
+    folder: src/content/services
+    extension: json
+    format: json
+    create: true
+    delete: true
+    slug: "{{slug}}"
+    identifier_field: title
+    sortable_fields: [order, title]
+    summary: "{{order}}. {{title}}"
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: intro, label: Intro, widget: text }
+      - { name: bullets, label: Bullet points, widget: list, field: { name: bullet, label: Bullet, widget: string } }
+      - { name: note, label: Footnote, widget: text, required: false }
+      - { name: order, label: Position, widget: number, value_type: int, min: 1 }
+      - { name: image, label: Card image, widget: image, hint: "Shown at about 984 × 662. WebP or JPG." }
+      - { name: imageAlt, label: Card image alt text, widget: string }
+      - { name: curve, label: Background curve, widget: image, default: /services/curve-strategy.webp }

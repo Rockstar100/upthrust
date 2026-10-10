@@ -1,4 +1,7 @@
 ---
+import { existsSync } from 'node:fs';
+import path from 'node:path';
+
 interface Service {
   title: string;
   intro: string;
@@ -14,6 +17,14 @@ interface Props {
   services: Service[];
 }
 const { label, contactLabel, services } = Astro.props;
+
+// Images uploaded through the CMS have no -560 copy, so only offer one when it exists.
+const srcsetFor = (image: string) => {
+  const small = image.replace(/\.webp$/, '-560.webp');
+  return small !== image && existsSync(path.join(process.cwd(), 'public', small))
+    ? `${small} 560w, ${image} 984w`
+    : undefined;
+};
 ---
 
 <section class="services" id="services" aria-label={label}>
@@ -44,7 +55,7 @@ const { label, contactLabel, services } = Astro.props;
           <img
             class="slide-image"
             src={service.image}
-            srcset={`${service.image.replace('.webp', '-560.webp')} 560w, ${service.image} 984w`}
+            srcset={srcsetFor(service.image)}
             sizes="(min-width: 64rem) min(34.2vw, 492px), (min-width: 36rem) 34rem, calc(100vw - 2.5rem)"
             alt={service.imageAlt}
             width="984"
