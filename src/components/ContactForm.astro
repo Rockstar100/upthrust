@@ -2,10 +2,11 @@
 interface Props {
   title: string;
   intro: string;
+  successTitle: string;
   success: string;
   submitLabel: string;
 }
-const { title, intro, success, submitLabel } = Astro.props;
+const { title, intro, successTitle, success, submitLabel } = Astro.props;
 ---
 
 <dialog id="contact-dialog" class="contact-dialog" aria-labelledby="contact-title">
@@ -46,11 +47,22 @@ const { title, intro, success, submitLabel } = Astro.props;
       <button class="submit" type="submit">{submitLabel}</button>
     </div>
 
-    <p class="success" data-success hidden role="status">{success}</p>
+    <div class="success" data-success hidden tabindex="-1" role="status">
+      <svg class="success-icon" viewBox="0 0 24 24" width="48" height="48" aria-hidden="true">
+        <circle cx="12" cy="12" r="12" fill="currentColor" />
+        <path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      <p class="success-text">{success}</p>
+      <p class="success-meta" data-success-meta hidden>We'll reply to <strong data-success-email></strong>.</p>
+      <div class="success-actions">
+        <button class="submit" type="button" data-close-contact>Close</button>
+        <button class="text-button" type="button" data-send-another>Send another message</button>
+      </div>
+    </div>
   </form>
 </dialog>
 
-<script define:vars={{ success }}>
+<script define:vars={{ title, successTitle }}>
   const dialog = document.getElementById('contact-dialog');
   const form = document.getElementById('contact-form');
   if (!(dialog instanceof HTMLDialogElement) || !(form instanceof HTMLFormElement)) {
@@ -59,10 +71,33 @@ const { title, intro, success, submitLabel } = Astro.props;
 
   const fields = form.querySelector('[data-fields]');
   const successNode = form.querySelector('[data-success]');
+  const successMeta = form.querySelector('[data-success-meta]');
+  const successEmail = form.querySelector('[data-success-email]');
+  const heading = document.getElementById('contact-title');
+  const intro = document.getElementById('contact-intro');
   const formError = document.getElementById('form-error');
 
   const openers = document.querySelectorAll('[data-open-contact]');
-  const closer = form.querySelector('[data-close-contact]');
+
+  const showForm = () => {
+    form.reset();
+    if (heading) heading.textContent = title;
+    if (intro) intro.hidden = false;
+    if (fields instanceof HTMLElement) fields.hidden = false;
+    if (successNode instanceof HTMLElement) successNode.hidden = true;
+  };
+
+  const showSuccess = (email) => {
+    if (heading) heading.textContent = successTitle;
+    if (intro) intro.hidden = true;
+    if (fields instanceof HTMLElement) fields.hidden = true;
+    if (successEmail) successEmail.textContent = email;
+    if (successMeta instanceof HTMLElement) successMeta.hidden = !email;
+    if (successNode instanceof HTMLElement) {
+      successNode.hidden = false;
+      successNode.focus();
+    }
+  };
 
   const clearErrors = () => {
     form.querySelectorAll('.error').forEach((node) => {
@@ -87,7 +122,14 @@ const { title, intro, success, submitLabel } = Astro.props;
   };
 
   openers.forEach((button) => button.addEventListener('click', open));
-  closer?.addEventListener('click', () => dialog.close());
+  form.querySelectorAll('[data-close-contact]').forEach((button) => button.addEventListener('click', () => dialog.close()));
+  form.querySelector('[data-send-another]')?.addEventListener('click', () => {
+    showForm();
+    document.getElementById('name')?.focus();
+  });
+  dialog.addEventListener('close', () => {
+    if (successNode instanceof HTMLElement && !successNode.hidden) showForm();
+  });
 
   if (location.hash === '#contact') open();
   window.addEventListener('hashchange', () => {
@@ -155,12 +197,7 @@ const { title, intro, success, submitLabel } = Astro.props;
         form_id: 'contact',
       });
 
-      if (fields instanceof HTMLElement) fields.hidden = true;
-      if (successNode instanceof HTMLElement) {
-        successNode.hidden = false;
-        successNode.textContent = success;
-        successNode.focus?.();
-      }
+      showSuccess(email);
     } catch {
       if (formError) {
         formError.textContent = 'Something went wrong. Try again.';

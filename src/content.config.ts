@@ -43,6 +43,7 @@ const site = defineCollection({
     form: z.object({
       title: z.string(),
       intro: z.string(),
+      successTitle: z.string(),
       success: z.string(),
       submitLabel: z.string(),
     }),

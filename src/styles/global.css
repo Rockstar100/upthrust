@@ -792,7 +792,45 @@ button:active { transform: scale(0.97); }
 
 .submit:hover { background: var(--ink); }
 
-.success { font-size: 1.15rem; }
+.success {
+  display: grid;
+  justify-items: start;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+  outline: none;
+}
+
+.success[hidden] { display: none; }
+
+.success-icon { color: var(--orange); }
+
+.success-text { margin: 0; font-size: 1.15rem; line-height: 1.5; }
+
+.success-meta { margin: 0; color: #5e5a55; overflow-wrap: anywhere; }
+
+.success-meta strong { color: var(--ink); font-weight: 600; }
+
+.success-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1.25rem;
+  margin-top: 0.75rem;
+}
+
+.text-button {
+  border: 0;
+  padding: 0.85rem 0;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+.text-button:hover { color: var(--orange); }
 
 .hp {
   position: absolute;
