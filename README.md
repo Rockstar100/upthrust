@@ -1,23 +1,32 @@
 # Upthrust Design
 
-A single landing page built from the supplied Figma file (Homepage frame, 1440 × 3331). The page is static HTML. The form handler is the only server route.
+A single landing page built from the supplied Figma file (Homepage frame, 1440 × 3331). The page is static HTML on Vercel's CDN. The form handler and the CMS sign-in are the only server routes.
 
 ## Stack
 
-Astro and Tailwind. Astro puts the copy in the HTML, which is what this page needs for speed and SEO. Tailwind is only the base layer. The layout lives in `src/styles/global.css`.
+Astro, Tailwind, Vercel, Decap CMS, Vercel Blob.
+
+Astro puts the copy in the HTML, which is what this page needs for speed and SEO. Tailwind is only the base layer. The layout lives in `src/styles/global.css`.
 
 The desktop layout uses the Figma coordinates directly. Each section is a container, and one Figma pixel is `100cqi / 1440`, so at 1440 every layer sits where it sits in the file and it scales evenly above and below that. Below 768 the hero uses its own 375-wide composition, and the service slides and footer switch to a stacked flow below 1024.
 
-The trade-off against a hosted CMS is that a content edit is a file change and a rebuild. That stays fast and has no secrets. A hosted CMS would add a client and another service for one page.
+Content is JSON in the repo, edited through Decap CMS. Decap is git-based: a save is a commit, and the commit triggers a Vercel deploy. There is no content database to host or back up, and every change has history and can be reverted. The trade-off is that a published edit takes a build (under a minute) to go live.
 
 ## Structure
 
 ```text
 src/content/site/home.json     hero notes, logo names, footer, form copy
 src/content/services/*.json    the four service slides
+src/content.config.ts          schema for both, checked at build time
 src/components/                header, hero, logo rail, services, footer, contact dialog
 src/pages/index.astro          the page
 src/pages/api/submit.ts        contact and newsletter handler
+src/lib/submissions.ts         storage: Vercel Blob when deployed, data/submissions.json locally
+src/pages/api/auth.ts          GitHub sign-in for the CMS
+src/pages/api/callback.ts
+src/pages/robots.txt.ts        robots.txt and sitemap.xml, built from SITE_URL
+src/pages/sitemap.xml.ts
+public/admin/                  Decap CMS (index.html + config.yml)
 public/hero, public/brand      vectors copied out of Figma
 public/services                bento cards and copper-curve backdrops per slide
 scripts/build-figma-assets.cjs turns the raw Figma captures in tmp/ into the files above
@@ -26,9 +35,15 @@ scripts/extract-grid.cjs       crops the Figma "curve lines" grid behind the ser
 
 ## Editing content
 
-Change the JSON files above. `npm run dev` refreshes the page. Services are ordered by the `order` field. After launch, the safe update is a commit and a redeploy.
+On the live site, open `/admin/`, sign in with GitHub, edit, and Publish. The site rebuilds in about a minute.
 
-The hero type (BOLD DESIGN, THAT, PERFORMS), the side notes, the logo rail, and the footer wordmark are the outlined vectors from Figma, so they match the file exactly. Their text is also in the HTML for screen readers and search. The service slides, footer links, and newsletter are live text.
+Locally, run `npm run dev` and `npm run cms` in two terminals, then open `http://localhost:4321/admin/index.html`. Edits are written straight to the JSON files; commit them as usual.
+
+Editors can change the page copy, footer links, form text, and the service slides (add, remove, reorder with the Position field, swap the card image). Uploaded images go to `public/uploads`.
+
+The hero type (BOLD DESIGN, THAT, PERFORMS), the side notes, the logo rail, and the footer wordmark are the outlined vectors from Figma, so they match the file exactly. Their text in the CMS is what screen readers and search engines read. Changing the artwork itself means replacing the SVG.
+
+There are no testimonials or FAQs because the design has none. Either would be one more folder collection, the same shape as `services`.
 
 ## Forms and tracking
 
@@ -36,16 +51,28 @@ Contact us and every Contact button open a dialog.
 
 - Required: name, email, message. Errors show on the field.
 - A successful submit replaces the form with a confirmation.
-- The server checks the same fields and appends the entry to `data/submissions.json` (gitignored).
+- The server checks the same fields again, drops honeypot hits, and stores the entry.
 - Only after a 200 response, the page pushes `{ event: "form_submit", form_id: "contact" }` onto `window.dataLayer`.
 
-The footer newsletter needs a valid email and the consent box. On success it pushes `{ event: "form_submit", form_id: "newsletter" }` and stores the email in the same file with `type: "newsletter"`.
+The footer newsletter needs a valid email and the consent box. On success it pushes `{ event: "form_submit", form_id: "newsletter" }`.
 
-Verify in the browser console with `dataLayer.filter((e) => e.event === "form_submit")`, then open `data/submissions.json`.
+Where entries go:
 
-Set `PUBLIC_GTM_ID` in `.env` if a container should load. It loads after idle. The dataLayer event is pushed even when that id is empty. Copy `.env.example`. Do not commit `.env`.
+- Deployed: one private JSON file per entry in Vercel Blob, under `submissions/<contact|newsletter>/<date>/<id>.json`. Browse them in the Vercel dashboard under Storage. Private blobs are not reachable by URL.
+- Local: `data/submissions.json` (gitignored).
 
-`SITE_URL` is the canonical origin. No trailing slash.
+Verify tracking in the browser console with `dataLayer.filter((e) => e.event === "form_submit")`. With a GTM container set, use GTM Preview: the `form_submit` custom event appears after a successful submit, and a Custom Event trigger on `form_submit` can fire a GA4 or Ads conversion tag.
+
+## Environment variables
+
+Copy `.env.example` to `.env` for local work. Do not commit `.env`. On Vercel they are set under Project → Settings → Environment Variables.
+
+| Name | Purpose |
+| --- | --- |
+| `SITE_URL` | Canonical origin, no trailing slash. Falls back to the Vercel production domain. |
+| `PUBLIC_GTM_ID` | GTM container id. Optional; loads after idle. The dataLayer event is pushed either way. |
+| `BLOB_READ_WRITE_TOKEN` | Set by Vercel when a Blob store is connected. Unset locally. |
+| `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` | GitHub OAuth app for CMS sign-in. Callback URL `https://<domain>/api/callback`. |
 
 ## Run
 
@@ -54,22 +81,20 @@ npm install
 npm run dev
 ```
 
-Production:
+Production build: `npm run build`. The output is in `.vercel/output`.
+
+## Deploy
 
 ```sh
-npm run build
-npm run preview
+npx vercel login
+npx vercel link
+npx vercel blob create-store upthrust-submissions --access private --yes
+npx vercel --prod
 ```
 
-`npm start` runs the Node server from `dist/server/entry.mjs`.
+For the CMS, create a GitHub OAuth app (GitHub → Settings → Developer settings → OAuth Apps) with the callback above, then add its id and secret to the project and redeploy. Connect the GitHub repo in Vercel so CMS commits deploy automatically.
 
-Deploy with the Vercel CLI once it is logged in:
-
-```sh
-npx vercel
-```
-
-Set `SITE_URL` to the deployed origin and redeploy so the canonical and Open Graph URLs match.
+After launch, every change, whether a CMS edit or code, is a commit. Vercel builds a preview for branches and pull requests, and a bad deploy can be rolled back to the previous one from the dashboard.
 
 ## Assets
 
@@ -83,4 +108,5 @@ Cursor was used to scaffold the project, pull layers out of Figma, and write the
 
 - The file shows one slide at a time with no controls. The page adds arrows and dots so the four slides can be reached.
 - Footer copy such as "add description here" and "Lorem ipsum" is the placeholder text from the file.
-- There is no hosted URL yet. Vercel and Netlify were not logged in on this machine.
+- Submissions are stored, not emailed. A notification (Resend or similar) would be the next step.
+- `decap-server` (local CMS only, dev dependency) carries audit warnings. Production dependencies audit clean.
