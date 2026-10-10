@@ -18,6 +18,19 @@ const dropBuildOnlyImports = {
   },
 };
 
+// Vercel serves public/admin/index.html at /admin; the Astro dev server only serves it by full path.
+/** @type {import('vite').Plugin} */
+const adminIndexInDev = {
+  name: 'admin-index-in-dev',
+  apply: 'serve',
+  configureServer(server) {
+    server.middlewares.use((req, _res, next) => {
+      req.url = req.url?.replace(/^\/admin\/?(?=\?|$)/, '/admin/index.html');
+      next();
+    });
+  },
+};
+
 // https://astro.build/config
 export default defineConfig({
   site,
@@ -25,6 +38,6 @@ export default defineConfig({
   adapter: vercel(),
   build: { inlineStylesheets: 'always' },
   vite: {
-    plugins: [tailwindcss(), dropBuildOnlyImports],
+    plugins: [tailwindcss(), dropBuildOnlyImports, adminIndexInDev],
   },
 });

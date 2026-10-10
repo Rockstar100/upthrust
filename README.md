@@ -37,7 +37,7 @@ scripts/extract-grid.cjs       crops the Figma "curve lines" grid behind the ser
 
 On the live site, open `/admin/`, sign in with GitHub, edit, and Publish. The site rebuilds in about a minute.
 
-Locally, run `npm run dev` and `npm run cms` in two terminals, then open `http://localhost:4321/admin/index.html`. Edits are written straight to the JSON files; commit them as usual.
+Locally, run `npm run dev` and `npm run cms` in two terminals, then open `http://localhost:4321/admin`. Edits are written straight to the JSON files; commit them as usual.
 
 Editors can change the page copy, footer links, form text, and the service slides (add, remove, reorder with the Position field, swap the card image). Uploaded images go to `public/uploads`.
 

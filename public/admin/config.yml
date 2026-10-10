@@ -1,5 +1,5 @@
 # Editors sign in with GitHub. Every save is a commit to the repo, and Vercel redeploys it.
-# Locally, run `npm run cms` next to `npm run dev` and open http://localhost:4321/admin/index.html (no sign-in, edits files on disk).
+# Locally, run `npm run cms` next to `npm run dev` and open http://localhost:4321/admin (no sign-in, edits files on disk).
 backend:
   name: github
   repo: Rockstar100/upthrust
