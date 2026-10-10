@@ -15,6 +15,12 @@ backend:
 
 local_backend: true
 
+site_url: https://upthrust-xi.vercel.app
+display_url: https://upthrust-xi.vercel.app
+logo:
+  src: /brand/logo.svg
+  show_in_header: true
+
 media_folder: public/uploads
 public_folder: /uploads
 
@@ -36,14 +42,14 @@ collections:
             hint: "The large hero type is artwork from the design. These fields are the text read by search engines and screen readers."
             fields:
               - { name: title, label: Headline (H1), widget: string }
-              - { name: notes, label: Side notes, widget: list, field: { name: note, label: Note, widget: string } }
+              - { name: notes, label: Side notes, widget: list, collapsed: false, field: { name: note, label: Note, widget: string } }
           - name: stat
             label: Stat beside the logos
             widget: object
             fields:
               - { name: value, label: Value, widget: string }
               - { name: label, label: Label, widget: string }
-          - { name: logos, label: Client names (alt text for the logo rail), widget: list, field: { name: logo, label: Client, widget: string } }
+          - { name: logos, label: Client names (alt text for the logo rail), widget: list, collapsed: false, field: { name: logo, label: Client, widget: string } }
           - { name: servicesLabel, label: Services eyebrow, widget: string }
           - name: footer
             label: Footer
@@ -111,12 +117,14 @@ collections:
     delete: true
     slug: "{{slug}}"
     identifier_field: title
-    sortable_fields: [order, title]
+    sortable_fields:
+      - { field: order, label: Position, default_sort: asc }
+      - title
     summary: "{{order}}. {{title}}"
     fields:
       - { name: title, label: Title, widget: string }
       - { name: intro, label: Intro, widget: text }
-      - { name: bullets, label: Bullet points, widget: list, field: { name: bullet, label: Bullet, widget: string } }
+      - { name: bullets, label: Bullet points, widget: list, collapsed: false, field: { name: bullet, label: Bullet, widget: string } }
       - { name: note, label: Footnote, widget: text, required: false }
       - { name: order, label: Position, widget: number, value_type: int, min: 1 }
       - { name: image, label: Card image, widget: image, hint: "Shown at about 984 × 662. WebP or JPG." }
