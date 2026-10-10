@@ -2,6 +2,12 @@
 
 A single landing page built from the supplied Figma file (Homepage frame, 1440 × 3331). The page is static HTML on Vercel's CDN. The form handler and the CMS sign-in are the only server routes.
 
+- Live: https://upthrust-xi.vercel.app
+- Repo: https://github.com/Rockstar100/upthrust
+- CMS: https://upthrust-xi.vercel.app/admin
+
+Lighthouse, mobile, on the live URL: Performance 99, Accessibility 100, Best Practices 100, SEO 100 (LCP 1.8 s, CLS 0, TBT 10 ms).
+
 ## Stack
 
 Astro, Tailwind, Vercel, Decap CMS, Vercel Blob.
@@ -71,7 +77,7 @@ Copy `.env.example` to `.env` for local work. Do not commit `.env`. On Vercel th
 | --- | --- |
 | `SITE_URL` | Canonical origin, no trailing slash. Falls back to the Vercel production domain. |
 | `PUBLIC_GTM_ID` | GTM container id. Optional; loads after idle. The dataLayer event is pushed either way. |
-| `BLOB_READ_WRITE_TOKEN` | Set by Vercel when a Blob store is connected. Unset locally. |
+| `BLOB_READ_WRITE_TOKEN` | Set by Vercel when a Blob store is connected. `npm run dev` ignores it and writes to `data/submissions.json`. |
 | `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` | GitHub OAuth app for CMS sign-in. Callback URL `https://<domain>/api/callback`. |
 
 ## Run
@@ -92,7 +98,9 @@ npx vercel blob create-store upthrust-submissions --access private --yes
 npx vercel --prod
 ```
 
-For the CMS, create a GitHub OAuth app (GitHub → Settings → Developer settings → OAuth Apps) with the callback above, then add its id and secret to the project and redeploy. Connect the GitHub repo in Vercel so CMS commits deploy automatically.
+The Vercel project is connected to the GitHub repo, so every push to `master` (including CMS commits) deploys to production.
+
+For the CMS, create a GitHub OAuth app (GitHub → Settings → Developer settings → OAuth Apps) with the callback above, then add its id and secret to the project and redeploy.
 
 After launch, every change, whether a CMS edit or code, is a commit. Vercel builds a preview for branches and pull requests, and a bad deploy can be rolled back to the previous one from the dashboard.
 
@@ -104,9 +112,13 @@ Every picture on the page comes from the Figma file through Copy as SVG / Copy a
 
 Cursor was used to scaffold the project, pull layers out of Figma, and write the page. Each section was checked against a 2× export of the Figma frame with a pixel diff at 1440, and in the browser at 375 and 768.
 
+Cursor was also used to move from the Node adapter to Vercel, add Blob storage and the CMS, and redesign the contact success state. Each change was reviewed, tested locally and on the live URL (form validation, storage, the `form_submit` push, Lighthouse), and committed separately.
+
 ## Limits
 
 - The file shows one slide at a time with no controls. The page adds arrows and dots so the four slides can be reached.
 - Footer copy such as "add description here" and "Lorem ipsum" is the placeholder text from the file.
 - Submissions are stored, not emailed. A notification (Resend or similar) would be the next step.
 - `decap-server` (local CMS only, dev dependency) carries audit warnings. Production dependencies audit clean.
+- `@astrojs/vercel` 11.0.13 leaves bare `rolldown` imports in the server entry, which crash the function on Vercel. A small plugin in `astro.config.mjs` strips them; remove it once the adapter is fixed.
+- No GTM container is configured yet, so tracking is verified through `window.dataLayer` rather than GTM Preview.
