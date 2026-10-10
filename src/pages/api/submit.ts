@@ -1,6 +1,5 @@
 import type { APIRoute } from 'astro';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import path from 'node:path';
+import { saveSubmission } from '../../lib/submissions';
 
 export const prerender = false;
 
@@ -14,14 +13,30 @@ function isEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
+async function store(entry: Parameters<typeof saveSubmission>[0]) {
+  try {
+    const id = await saveSubmission(entry);
+    return Response.json({ ok: true, id });
+  } catch (error) {
+    console.error('Failed to store submission', error);
+    return Response.json({ ok: false, error: 'Something went wrong. Try again.' }, { status: 500 });
+  }
+}
+
 export const POST: APIRoute = async ({ request }) => {
-  const data = await request.formData();
+  let data: FormData;
+  try {
+    data = await request.formData();
+  } catch {
+    return Response.json({ ok: false, error: 'Invalid request.' }, { status: 400 });
+  }
 
   if (clean(data.get('company_website'), 200)) {
     return Response.json({ ok: true });
   }
 
   const email = clean(data.get('email'), MAX.email);
+  const meta = { id: crypto.randomUUID(), submittedAt: new Date().toISOString() };
 
   if (data.get('form') === 'newsletter') {
     const fields: Record<string, string> = {};
@@ -30,8 +45,7 @@ export const POST: APIRoute = async ({ request }) => {
     if (Object.keys(fields).length) {
       return Response.json({ ok: false, error: 'Check the highlighted fields.', fields }, { status: 400 });
     }
-    const id = await store({ id: crypto.randomUUID(), type: 'newsletter', email, submittedAt: new Date().toISOString() });
-    return Response.json({ ok: true, id });
+    return store({ ...meta, type: 'newsletter', email });
   }
 
   const name = clean(data.get('name'), MAX.name);
@@ -47,33 +61,5 @@ export const POST: APIRoute = async ({ request }) => {
     return Response.json({ ok: false, error: 'Check the highlighted fields.', fields }, { status: 400 });
   }
 
-  const id = await store({
-    id: crypto.randomUUID(),
-    type: 'contact',
-    name,
-    email,
-    company,
-    message,
-    submittedAt: new Date().toISOString(),
-  });
-
-  return Response.json({ ok: true, id });
+  return store({ ...meta, type: 'contact', name, email, company, message });
 };
-
-async function store(entry: Record<string, string>) {
-  const dir = path.join(process.cwd(), 'data');
-  const file = path.join(dir, 'submissions.json');
-  await mkdir(dir, { recursive: true });
-
-  let existing: unknown[] = [];
-  try {
-    existing = JSON.parse(await readFile(file, 'utf8'));
-    if (!Array.isArray(existing)) existing = [];
-  } catch {
-    existing = [];
-  }
-
-  existing.push(entry);
-  await writeFile(file, JSON.stringify(existing, null, 2));
-  return entry.id;
-}

@@ -1,15 +1,16 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-import node from '@astrojs/node';
+import vercel from '@astrojs/vercel';
 import tailwindcss from '@tailwindcss/vite';
 
-const site = process.env.SITE_URL || 'http://localhost:4321';
+const vercelUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+const site = process.env.SITE_URL || (vercelUrl ? `https://${vercelUrl}` : 'http://localhost:4321');
 
 // https://astro.build/config
 export default defineConfig({
   site,
   output: 'static',
-  adapter: node({ mode: 'standalone' }),
+  adapter: vercel(),
   build: { inlineStylesheets: 'always' },
   vite: {
     plugins: [tailwindcss()],
